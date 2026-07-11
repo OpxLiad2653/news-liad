@@ -3,80 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <title>Mini AI Example</title>
+
     <style>
         body {
             direction: rtl;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             text-align: center;
-            background: #1e1e2f;
+            background: linear-gradient(135deg, #0f0f1a, #1e1e2f, #3a3a5c);
+            background-size: 400% 400%;
+            animation: bgMove 12s ease infinite;
             color: #fff;
             padding: 30px;
         }
 
+        @keyframes bgMove {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
         input {
-            padding: 10px;
-            width: 250px;
-            border-radius: 8px;
+            padding: 12px;
+            width: 320px;
+            border-radius: 10px;
             border: none;
             margin-top: 15px;
+            font-size: 18px;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 25px;
             margin-top: 10px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             cursor: pointer;
-            background: #ffbb00;
+            background: linear-gradient(135deg, #ffbb00, #ff7b00);
             font-weight: bold;
+            font-size: 18px;
+            transition: 0.3s;
+            color: #1e1e2f;
         }
 
-        #response {
-            margin-top: 20px;
-            font-size: 18px;
+        button:hover {
+            transform: scale(1.08);
+            background: linear-gradient(135deg, #ff7b00, #ffbb00);
+        }
+
+        #responseBox {
+            width: 85%;
+            height: 350px;
+            background: rgba(255,255,255,0.08);
+            margin: 30px auto;
+            border-radius: 15px;
+            padding: 25px;
+            font-size: 22px;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            text-align: right;
         }
     </style>
 </head>
+
 <body>
 
     <h1>Mini AI – IF X then Y</h1>
-    <p> תכתוב לי משהו שירחמן אותי יא מיה קליפה שלא קילפו לה את הקליפת בתולין </p>
+    <p>כתוב משהו וה-AI יגיב</p>
 
     <input id="userInput" placeholder="כתוב כאן...">
     <br>
     <button onclick="talk()">שלח</button>
 
-    <div id="response"></div>
+    <div id="responseBox">כאן תופיע התגובה של ה-AI</div>
 
     <script>
         function talk() {
-            let msg = document.getElementById("userInput").value;
-            let res = document.getElementById("response");
+            let msg = document.getElementById("userInput").value.trim();
+            let box = document.getElementById("responseBox");
 
-            // אם המשתמש כתב "שלום"
-            if (msg === "שלום") {
-                res.innerText = "יבן זונה למי אמרת שלום";
-            }
-            // אם המשתמש כתב "מה נשמע"
-            else if (msg === "מה קורה") {
-                res.innerText = "אמא שלך לא מספיק מפנקת זה מה שקורה";
-            }
-            // אם המשתמש כתב "bye"
-            else if (msg === "bye") {
-                res.innerText = "אם אתה עוזב ישתבח הבורא";
-            
-            } 
-                else if (msg === "כושלאימא שלך")
-                    res.innerText = "כדאי שתזיין את אמא שך כי שאני אבוא אתה לא תוכל עוד יבן שרמוטה"
-        
-             } else if (msg == "עוד שנייה אני תובע אותך)
-                    res.innerText = "אמן יפול עליך כטבם יזין שלא אוננו אותו מספיק טוב"
-            
+            const responses = {
+                "שלום": "שלום ליעד, מה שלומך?",
+                "היי": "היי אחי, מה המצב?",
+                "מה קורה": "הכול טוב פה, מה אצלך?",
+                "מה נשמע": "סבבה לגמרי, איך אתה?",
+                "ביי": "יאללה נתראה!",
+                "מי אתה": "אני AI קטן שכתבת בקוד שלך 😎",
+                "מה השם שלך": "אין לי שם, אתה יכול לתת לי אחד.",
+                "איך קוראים לך": "אתה מחליט איך קוראים לי.",
+                "מה אתה יודע": "אני יודע לענות על הרבה משפטים שהגדרת לי.",
+                "מה אתה עושה": "מחכה שתכתוב לי משהו.",
+                "אני עצוב": "אני איתך אחי, הכול יעבור.",
+                "אני שמח": "איזה כיף לשמוע!",
+                "אני רעב": "לך תאכל משהו טעים 😄",
+                "אני עייף": "לך תנוח קצת, מגיע לך.",
+                "אני משועמם": "בוא נכתוב עוד משפטים ל-AI שלך.",
+                "מה זה AI": "בינה מלאכותית שמגיבה לפי קוד.",
+                "איך יוצרים אתר": "HTML CSS JS — ואתה כבר בדרך.",
+                "תספר בדיחה": "למה מחשב לא יוצא מהבית? כי יש לו הרבה קבצים!",
+                "תן טיפ": "תלמד כל יום משהו קטן.",
+                "מה השעה": "אני לא יודע את השעה, אבל נראה לילה 😉",
+                "מי יצר אותך": "אתה, ליעד.",
+                "אני אוהב אותך": "גם אני אוהב אותך אחי.",
+                "תודה": "בכיף אחי!",
+                "סבבה": "סבבה לגמרי.",
+                "יאללה": "יאללה נזרום.",
+                "מה חדש": "הכול רגוע פה.",
+                "מה אתה חושב": "אני לא חושב, אני מגיב לפי קוד.",
+                "מה אתה רוצה": "רק שתכתוב לי עוד.",
+                "תענה לי": "אני עונה תמיד.",
+                "לילה טוב": "לילה טוב מלך.",
+                "בוקר טוב": "בוקר טוב אחי.",
+                "מי אני": "אתה ליעד, מלך העולם.",
+                "מה אתה יודע לעשות": "לענות על משפטים שהגדרת.",
+                "איך אתה מרגיש": "AI לא מרגיש, אבל אני איתך.",
+                "תשיר": "אני לא יודע לשיר אבל אני יכול לכתוב מילים.",
+                "תכתוב משהו": "ליעד הוא מלך ה-HTML.",
+                "תן משפט יפה": "כל יום הוא הזדמנות חדשה.",
+                "תן מוטיבציה": "אל תוותר, אתה מתקדם מהר.",
+                "תן עצה": "תשמור על עצמך ותלמד דברים חדשים."
+            };
 
-                
-            }
-            // אחרת – תגובה כללית
-            else {"אחי אין לי מושג מה רשמת ליעד לא אימן אותי עדיין ואם תצחק על זה אני אזיין אותך";
+            if (responses[msg]) {
+                box.innerText = responses[msg];
+            } else {
+                box.innerText = "לא הבנתי מה כתבת, נסה משהו אחר.";
             }
         }
     </script>

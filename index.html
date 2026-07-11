@@ -67,20 +67,18 @@
 <body>
 
 <h1>AI קטן שלומד ומשתפר</h1>
-<p>תכתוב משהו — וה‑AI ילמד ויגיב טוב יותר בכל פעם</p>
+<p>תכתוב משהו ותלחץ שלח – ה-AI ילמד ויענה</p>
 
 <input id="userInput" placeholder="כתוב כאן...">
 <br>
-<button onclick="learn()">למד את ה-AI</button>
-<button onclick="talk()">דבר עם ה-AI</button>
+<button onclick="sendToAI()">שלח ל-AI</button>
 
 <div id="responseBox">כאן יופיע המשפט שה-AI יוצר</div>
 
 <script>
 let model = {};
 
-function learn() {
-    let text = document.getElementById("userInput").value.trim();
+function learn(text) {
     let words = text.split(/\s+/);
 
     for (let i = 0; i < words.length - 1; i++) {
@@ -90,17 +88,12 @@ function learn() {
         if (!model[w1]) model[w1] = [];
         model[w1].push(w2);
     }
-
-    document.getElementById("responseBox").innerText =
-        "ה-AI למד את המשפט שלך והוא עכשיו קצת יותר חכם.";
 }
 
-function talk() {
+function generate() {
     let keys = Object.keys(model);
     if (keys.length === 0) {
-        document.getElementById("responseBox").innerText =
-            "ה-AI עדיין לא למד כלום. תלמד אותו קודם.";
-        return;
+        return "ה-AI עדיין לא למד כלום.";
     }
 
     let word = keys[Math.floor(Math.random() * keys.length)];
@@ -113,7 +106,21 @@ function talk() {
         output.push(word);
     }
 
-    document.getElementById("responseBox").innerText = output.join(" ");
+    return output.join(" ");
+}
+
+function sendToAI() {
+    let text = document.getElementById("userInput").value.trim();
+    let box = document.getElementById("responseBox");
+
+    if (!text) {
+        box.innerText = "תכתוב משהו קודם.";
+        return;
+    }
+
+    learn(text);
+    let reply = generate();
+    box.innerText = reply;
 }
 </script>
 

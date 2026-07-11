@@ -1,134 +1,121 @@
 <!DOCTYPE html>
 <html lang="he">
 <head>
-    <meta charset="UTF-8">
-    <title>Mini AI Example</title>
+<meta charset="UTF-8">
+<title>Growing Mini AI</title>
 
-    <style>
-        body {
-            direction: rtl;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            text-align: center;
-            background: linear-gradient(135deg, #0f0f1a, #1e1e2f, #3a3a5c);
-            background-size: 400% 400%;
-            animation: bgMove 12s ease infinite;
-            color: #fff;
-            padding: 30px;
-        }
+<style>
+    body {
+        direction: rtl;
+        font-family: 'Segoe UI', Arial;
+        text-align: center;
+        background: linear-gradient(135deg, #0f0f1a, #1e1e2f, #3a3a5c);
+        background-size: 400% 400%;
+        animation: bgMove 12s ease infinite;
+        color: #fff;
+        padding: 30px;
+    }
 
-        @keyframes bgMove {
-            0% {background-position: 0% 50%;}
-            50% {background-position: 100% 50%;}
-            100% {background-position: 0% 50%;}
-        }
+    @keyframes bgMove {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
+    }
 
-        input {
-            padding: 12px;
-            width: 320px;
-            border-radius: 10px;
-            border: none;
-            margin-top: 15px;
-            font-size: 18px;
-        }
+    input {
+        padding: 12px;
+        width: 320px;
+        border-radius: 10px;
+        border: none;
+        margin-top: 15px;
+        font-size: 18px;
+    }
 
-        button {
-            padding: 12px 25px;
-            margin-top: 10px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            background: linear-gradient(135deg, #ffbb00, #ff7b00);
-            font-weight: bold;
-            font-size: 18px;
-            transition: 0.3s;
-            color: #1e1e2f;
-        }
+    button {
+        padding: 12px 25px;
+        margin-top: 10px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, #ffbb00, #ff7b00);
+        font-weight: bold;
+        font-size: 18px;
+        transition: 0.3s;
+        color: #1e1e2f;
+    }
 
-        button:hover {
-            transform: scale(1.08);
-            background: linear-gradient(135deg, #ff7b00, #ffbb00);
-        }
+    button:hover {
+        transform: scale(1.08);
+        background: linear-gradient(135deg, #ff7b00, #ffbb00);
+    }
 
-        #responseBox {
-            width: 85%;
-            height: 350px;
-            background: rgba(255,255,255,0.08);
-            margin: 30px auto;
-            border-radius: 15px;
-            padding: 25px;
-            font-size: 22px;
-            overflow-y: auto;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            text-align: right;
-        }
-    </style>
+    #responseBox {
+        width: 85%;
+        height: 300px;
+        background: rgba(255,255,255,0.08);
+        margin: 30px auto;
+        border-radius: 15px;
+        padding: 25px;
+        font-size: 22px;
+        overflow-y: auto;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        text-align: right;
+    }
+</style>
 </head>
 
 <body>
 
-    <h1>Mini AI – IF X then Y</h1>
-    <p>כתוב משהו וה-AI יגיב</p>
+<h1>AI קטן שלומד ומשתפר</h1>
+<p>תכתוב משהו — וה‑AI ילמד ויגיב טוב יותר בכל פעם</p>
 
-    <input id="userInput" placeholder="כתוב כאן...">
-    <br>
-    <button onclick="talk()">שלח</button>
+<input id="userInput" placeholder="כתוב כאן...">
+<br>
+<button onclick="learn()">למד את ה-AI</button>
+<button onclick="talk()">דבר עם ה-AI</button>
 
-    <div id="responseBox">כאן תופיע התגובה של ה-AI</div>
+<div id="responseBox">כאן יופיע המשפט שה-AI יוצר</div>
 
-    <script>
-        function talk() {
-            let msg = document.getElementById("userInput").value.trim();
-            let box = document.getElementById("responseBox");
+<script>
+let model = {};
 
-            const responses = {
-                "שלום": "שלום ליעד, מה שלומך?",
-                "היי": "היי אחי, מה המצב?",
-                "מה קורה": "הכול טוב פה, מה אצלך?",
-                "מה נשמע": "סבבה לגמרי, איך אתה?",
-                "ביי": "יאללה נתראה!",
-                "מי אתה": "אני AI קטן שכתבת בקוד שלך 😎",
-                "מה השם שלך": "אין לי שם, אתה יכול לתת לי אחד.",
-                "איך קוראים לך": "אתה מחליט איך קוראים לי.",
-                "מה אתה יודע": "אני יודע לענות על הרבה משפטים שהגדרת לי.",
-                "מה אתה עושה": "מחכה שתכתוב לי משהו.",
-                "אני עצוב": "אני איתך אחי, הכול יעבור.",
-                "אני שמח": "איזה כיף לשמוע!",
-                "אני רעב": "לך תאכל משהו טעים 😄",
-                "אני עייף": "לך תנוח קצת, מגיע לך.",
-                "אני משועמם": "בוא נכתוב עוד משפטים ל-AI שלך.",
-                "מה זה AI": "בינה מלאכותית שמגיבה לפי קוד.",
-                "איך יוצרים אתר": "HTML CSS JS — ואתה כבר בדרך.",
-                "תספר בדיחה": "למה מחשב לא יוצא מהבית? כי יש לו הרבה קבצים!",
-                "תן טיפ": "תלמד כל יום משהו קטן.",
-                "מה השעה": "אני לא יודע את השעה, אבל נראה לילה 😉",
-                "מי יצר אותך": "אתה, ליעד.",
-                "אני אוהב אותך": "גם אני אוהב אותך אחי.",
-                "תודה": "בכיף אחי!",
-                "סבבה": "סבבה לגמרי.",
-                "יאללה": "יאללה נזרום.",
-                "מה חדש": "הכול רגוע פה.",
-                "מה אתה חושב": "אני לא חושב, אני מגיב לפי קוד.",
-                "מה אתה רוצה": "רק שתכתוב לי עוד.",
-                "תענה לי": "אני עונה תמיד.",
-                "לילה טוב": "לילה טוב מלך.",
-                "בוקר טוב": "בוקר טוב אחי.",
-                "מי אני": "אתה ליעד, מלך העולם.",
-                "מה אתה יודע לעשות": "לענות על משפטים שהגדרת.",
-                "איך אתה מרגיש": "AI לא מרגיש, אבל אני איתך.",
-                "תשיר": "אני לא יודע לשיר אבל אני יכול לכתוב מילים.",
-                "תכתוב משהו": "ליעד הוא מלך ה-HTML.",
-                "תן משפט יפה": "כל יום הוא הזדמנות חדשה.",
-                "תן מוטיבציה": "אל תוותר, אתה מתקדם מהר.",
-                "תן עצה": "תשמור על עצמך ותלמד דברים חדשים."
-            };
+function learn() {
+    let text = document.getElementById("userInput").value.trim();
+    let words = text.split(/\s+/);
 
-            if (responses[msg]) {
-                box.innerText = responses[msg];
-            } else {
-                box.innerText = "לא הבנתי מה כתבת, נסה משהו אחר.";
-            }
-        }
-    </script>
+    for (let i = 0; i < words.length - 1; i++) {
+        let w1 = words[i];
+        let w2 = words[i + 1];
+
+        if (!model[w1]) model[w1] = [];
+        model[w1].push(w2);
+    }
+
+    document.getElementById("responseBox").innerText =
+        "ה-AI למד את המשפט שלך והוא עכשיו קצת יותר חכם.";
+}
+
+function talk() {
+    let keys = Object.keys(model);
+    if (keys.length === 0) {
+        document.getElementById("responseBox").innerText =
+            "ה-AI עדיין לא למד כלום. תלמד אותו קודם.";
+        return;
+    }
+
+    let word = keys[Math.floor(Math.random() * keys.length)];
+    let output = [word];
+
+    for (let i = 0; i < 20; i++) {
+        let nextWords = model[word];
+        if (!nextWords || nextWords.length === 0) break;
+        word = nextWords[Math.floor(Math.random() * nextWords.length)];
+        output.push(word);
+    }
+
+    document.getElementById("responseBox").innerText = output.join(" ");
+}
+</script>
 
 </body>
 </html>

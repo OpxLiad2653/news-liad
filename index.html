@@ -1,76 +1,85 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>חדשות ליעד</title>
+    <title>Mini AI Example</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #121212; color: #e0e0e0; text-align: center; padding: 20px; margin: 0; }
-        .main-container { max-width: 850px; margin: auto; background: #1e1e1e; padding: 25px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); }
-        .news-box { background: #2a2a2a; margin: 25px 0; padding: 20px; border-radius: 15px; text-align: right; border-right: 6px solid #1a73e8; transition: 0.3s; }
-        .angry { border-right-color: #ff4b2b; background: #3d1a1a; }
-        .happy { border-right-color: #2ecc71; background: #1a332a; }
-        img { border-radius: 12px; max-width: 100%; height: auto; margin: 15px 0; border: 1px solid #444; }
-        button { background: #1a73e8; color: white; border: none; padding: 15px 30px; border-radius: 12px; cursor: pointer; font-size: 18px; font-weight: bold; }
-        button:hover { background: #1557b0; transform: translateY(-2px); }
-        h1 { color: #ffffff; font-size: 2.5em; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
-        h2 { color: #58a6ff; margin-top: 0; }
-        p { line-height: 1.8; font-size: 1.15em; color: #ccc; }
+        body {
+            direction: rtl;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #1e1e2f;
+            color: #fff;
+            padding: 30px;
+        }
+
+        input {
+            padding: 10px;
+            width: 250px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            background: #ffbb00;
+            font-weight: bold;
+        }
+
+        #response {
+            margin-top: 20px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <img src="https://d3m9l0v76dty0.cloudfront.net/system/photos/9097137/large/e260fb9e692e0b415b50b4b46c8d7a19.png" width="350">
-    <h1>🗞️ חדשות ליעד: המהדורה הרשמית</h1>
-    <p>הגעתם לעמוד הרשמי! כאן תקבלו את כל העדכונים, המתכונים והאמת בפרצוף. 🥘</p>
-    
-    <button onclick="openMenu()">תפריט אפשרויות 🤖</button>
+    <h1>Mini AI – IF X then Y</h1>
+    <p> תכתוב לי משהו שירחמן אותי יא מיה קליפה שלא קילפו לה את הקליפת בתולין </p>
 
-    <div class="news-box">
-        <h2>טראמפ והמלחמה הדיגיטלית 🤖</h2>
-        <p>הנשיא טראמפ מאיים בנשק AI התקפי לשיבוש מערכות ההגנה של איראן תוך שניות. המתיחות בשיא. 🇺🇸🇮🇷</p>
-    </div>
+    <input id="userInput" placeholder="כתוב כאן...">
+    <br>
+    <button onclick="talk()">שלח</button>
 
-    <div class="news-box">
-        <h2>פסגת הענק בסין 🤝</h2>
-        <p>טראמפ ושי ג'ינפינג נפגשים בבייג'ינג לביקור היסטורי. כל העולם מחכה לראות אם יהיה "דיל" כלכלי חדש. 🇨🇳</p>
-    </div>
+    <div id="response"></div>
 
-    <div class="news-box happy">
-        <h2>סר דייוויד אטנבורו חוגג 100 🐢</h2>
-        <p>חוקר הטבע האגדי הגיע לגיל 100! העולם מצדיע לאיש שגרם לכולנו לאהוב את הטבע ולשמור עליו. 🌿</p>
-    </div>
+    <script>
+        function talk() {
+            let msg = document.getElementById("userInput").value;
+            let res = document.getElementById("response");
 
-    <div class="news-box angry">
-        <h2>אתה פראייר? כי המדינה חושבת שכן 🪖</h2>
-        <p>בזמן שאתה מתכנן את הגיוס, הפוליטיקאים מסדרים פטורים לאחרים מהמזגן בלשכה. פשוט דוחה. 🎭</p>
-    </div>
+            // אם המשתמש כתב "שלום"
+            if (msg === "שלום") {
+                res.innerText = "יבן זונה למי אמרת שלום";
+            }
+            // אם המשתמש כתב "מה נשמע"
+            else if (msg === "מה קורה") {
+                res.innerText = "אמא שלך לא מספיק מפנקת זה מה שקורה";
+            }
+            // אם המשתמש כתב "bye"
+            else if (msg === "bye") {
+                res.innerText = "אם אתה עוזב ישתבח הבורא";
+            
+            } 
+                else if (msg === "כושלאימא שלך")
+                    res.innerText = "כדאי שתזיין את אמא שך כי שאני אבוא אתה לא תוכל עוד יבן שרמוטה"
+        
+             } else if (msg == "עוד שנייה אני תובע אותך)
+                    res.innerText = "אמן יפול עליך כטבם יזין שלא אוננו אותו מספיק טוב"
+            
 
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKaykOulpTIYhlSynW945A_ukieIJpLZmrAg&s" width="350">
-</div>
-
-<script>
-    function openMenu() {
-        let action = prompt("מה תרצה לעשות? (הקש: מתכון / פיצה / חדשות)");
-
-        if (action === "מתכון") {
-            alert("פסטה מוקרמת בדרך אליך! 🍝");
-            window.location.href = "https://www.mako.co.il/food-cooking_magazine/flavors-moms-recipes/Recipe-fcac6a7689b4031006.htm";
-        } 
-        else if (action === "פיצה") {
-            alert("הזמנת דומינוס פיצה... 🍕");
-            window.location.href = "https://www.dominos.co.il/";
+                
+            }
+            // אחרת – תגובה כללית
+            else {"אחי אין לי מושג מה רשמת ליעד לא אימן אותי עדיין ואם תצחק על זה אני אזיין אותך";
+            }
         }
-        else if (action === "חדשות") {
-            alert("הידיעות המרגיזות מחכות לך למטה... 😤");
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-        else if (action !== null) {
-            alert("פקודה לא מוכרת. נסה שוב! 🤷‍♂️");
-        }
-    }
-</script>
+    </script>
 
 </body>
 </html>

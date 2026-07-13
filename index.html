@@ -21,21 +21,18 @@
     <script>
         const box = document.getElementById("responseBox");
         const btn = document.getElementById("sendBtn");
-
-        const vocab = [
-            "i", "you", "me", "we", "he", "she", "they", "my", "your", "his", "her", "their", "it", "this", "that",
-            "space", "star", "blackhole", "galaxy", "orbit", "planet", "universe", "gravity", "comet", "asteroid", "nebula", "cosmos", "lightyear", "vacuum", "void", "stellar", "moon", "sun",
-            "javascript", "js", "web", "frontend", "backend", "code", "programming", "software", "developer", "node", "react", "html", "css", "script", "function", "variable", "object", "array", "python", "game", "abandoned", "learning", "build", "debug", "deployment",
-            "facebook", "instagram", "twitter", "tiktok", "whatsapp", "telegram", "youtube", "linkedin", "discord", "snapchat", "messenger",
-            "hello", "thanks", "sorry", "maybe", "please", "okay", "cool", "crazy", "amazing", "brother", "friend", "money", "work", "life", "future", "time", "day", "night", "now", "later", "good", "bad", "problem", "solution", "happy", "serious"
-        ];
+        
+        const knowledgeBase = {
+            "who is liad": "Liad is the brilliant developer building this AI.",
+            "what is js": "JS stands for JavaScript, the language of the web.",
+            "hello": "Hello Liad, I am ready to code and explore the universe with you."
+        };
 
         let model = JSON.parse(localStorage.getItem('spaceModel')) || {};
         
         function learn(text) {
             const arr = text.toLowerCase().match(/\b\w+\b/g);
             if (!arr) return;
-            
             for (let i = 0; i < arr.length - 1; i++) {
                 if (!model[arr[i]]) model[arr[i]] = [];
                 model[arr[i]].push(arr[i + 1]);
@@ -43,10 +40,14 @@
             localStorage.setItem('spaceModel', JSON.stringify(model));
         }
 
-        function generate(start) {
-            let cur = start || "hello";
-            let res = [cur];
+        function generate(input) {
+            const lowerInput = input.toLowerCase();
+            for (let key in knowledgeBase) {
+                if (lowerInput.includes(key)) return knowledgeBase[key];
+            }
             
+            let cur = input.split(" ")[0].toLowerCase();
+            let res = [cur];
             for (let i = 0; i < 6; i++) {
                 const opts = model[cur];
                 if (!opts || opts.length === 0) {
@@ -57,19 +58,14 @@
                 }
                 res.push(cur);
             }
-            
-            if (Math.random() > 0.7) {
-                res.push("liad");
-            }
-            
+            if (Math.random() > 0.7) res.push("liad");
             return res.join(" ");
         }
 
         btn.addEventListener('click', () => {
             const val = document.getElementById("userInput").value;
             learn(val);
-            const first = val.split(" ")[0].toLowerCase();
-            box.innerText = generate(first);
+            box.innerText = generate(val);
             document.getElementById("userInput").value = "";
         });
     </script>

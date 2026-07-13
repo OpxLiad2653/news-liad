@@ -76,9 +76,9 @@
 <div id="responseBox">כאן יופיע המשפט שה-AI יוצר</div>
 
 <script type="module">
-import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers/dist/transformers.min.js";
+import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0/dist/transformers.min.js";
 
-let generator = await pipeline("text-generation", "Xenova/gpt2");
+let generator = await pipeline("text-generation", "Xenova/tiny-random-gpt2");
 
 async function sendToAI() {
     const input = document.getElementById("userInput").value.trim();
@@ -89,12 +89,12 @@ async function sendToAI() {
         return;
     }
 
-    const prompt = "The AI says: " + input + "\n\n";
+    const prompt = "The AI says: " + input + "\n";
 
     const out = await generator(prompt, {
-        max_new_tokens: 200,
-        temperature: 0.9,
-        top_p: 0.95
+        max_new_tokens: 40,
+        temperature: 0.8,
+        top_p: 0.9
     });
 
     box.innerText = out[0].generated_text;
@@ -103,4 +103,3 @@ async function sendToAI() {
 
 </body>
 </html>
- 

@@ -27,18 +27,64 @@
         const box = document.getElementById("responseBox");
         const btn = document.getElementById("sendBtn");
 
-        const words = [
-          "hello","you","i","am","are","is","was","the","a","day","time","place","world","man","woman",
-          "friend","people","crew","team","car","house","story","idea","moment","game","music","move",
-          "thing","stuff","life","love","like","want","need","think","feel","know","see","hear","walk",
-          "run","talk","speak","work","code","learn","teach","help","give","take","make","go","come",
-          "live","die","dream","sleep","eat","drink","food","water","sun","moon","sky","rain","wind",
-          "fire","earth","light","dark","hot","cold","fun","boring","happy","sad","crazy","quiet","loud",
-          "fast","slow","big","small","new","old","perfect","simple","hard","easy","true","false","plan",
-          "goal","path","road","way","home","here","there","now","today","tomorrow","later","again",
-          "always","never","maybe"
-        ];
-
+       const words = [
+    "hello", "you", "i", "am", "are", "is", "was", "the", "a", "day", "time", "place", "world", "man", "woman",
+    "friend", "people", "crew", "team", "car", "house", "story", "idea", "moment", "game", "music", "move",
+    "thing", "stuff", "life", "love", "like", "want", "need", "think", "feel", "know", "see", "hear", "walk",
+    "run", "talk", "speak", "work", "code", "learn", "teach", "help", "give", "take", "make", "go", "come",
+    "live", "die", "dream", "sleep", "eat", "drink", "food", "water", "sun", "moon", "sky", "rain", "wind",
+    "fire", "earth", "light", "dark", "hot", "cold", "fun", "boring", "happy", "sad", "crazy", "quiet", "loud",
+    "fast", "slow", "big", "small", "new", "old", "perfect", "simple", "hard", "easy", "true", "false", "plan",
+    "goal", "path", "road", "way", "home", "here", "there", "now", "today", "tomorrow", "later", "again",
+    "always", "never", "maybe",
+    // מילים נוספות להרחבת המודל:
+    "adventure", "journey", "mountain", "ocean", "river", "forest", "desert", "stars", "galaxy", "universe",
+    "energy", "power", "strength", "courage", "wisdom", "knowledge", "secret", "mystery", "history", "future",
+    "past", "change", "growth", "purpose", "vision", "focus", "success", "failure", "hope", "faith", "trust",
+    "honor", "respect", "kindness", "gentle", "fierce", "wild", "calm", "storm", "thunder", "lightning",
+    "bridge", "door", "window", "book", "page", "words", "language", "voice", "sound", "silence", "echo",
+    "rhythm", "dance", "song", "art", "color", "paint", "beauty", "nature", "science", "physics", "logic",
+    "math", "data", "binary", "system", "network", "server", "cloud", "digital", "virtual", "reality",
+    "human", "soul", "spirit", "body", "mind", "heart", "breath", "blood", "bone", "skin", "muscle",
+    "wonder", "curiosity", "question", "answer", "solve", "build", "create", "invent", "design", "structure",
+    "pattern", "sequence", "link", "connect", "reach", "grasp", "hold", "release", "fly", "climb", "dive",
+    "jump", "fall", "rise", "stand", "sit", "wait", "watch", "search", "find", "lose", "hide", "seek",
+    "begin", "end", "stop", "start", "continue", "pause", "resume", "change", "shift", "turn", "spin",
+    "flow", "glow", "shine", "spark", "burn", "freeze", "melt", "solid", "liquid", "gas", "atom",
+    "molecule", "space", "gravity", "orbit", "planet", "comet", "meteor", "asteroid", "vacuum", "void",
+    "depth", "height", "width", "length", "distance", "near", "far", "wide", "narrow", "deep", "shallow",
+    "thick", "thin", "heavy", "light", "sharp", "dull", "rough", "smooth", "soft", "hard", "wet", "dry",
+    "clean", "dirty", "fresh", "stale", "sweet", "bitter", "sour", "salty", "spicy", "plain", "rich",
+    "poor", "valuable", "cheap", "expensive", "free", "bound", "open", "closed", "locked", "unlocked",
+    "broken", "fixed", "whole", "part", "total", "sum", "math", "add", "subtract", "multiply", "divide",
+    "count", "measure", "size", "shape", "form", "model", "frame", "base", "top", "bottom", "side",
+    "center", "middle", "edge", "corner", "angle", "curve", "straight", "circle", "square", "triangle",
+    "line", "point", "dot", "mark", "sign", "symbol", "letter", "note", "message", "text", "script",
+    "scroll", "screen", "button", "click", "input", "output", "process", "cycle", "loop", "error",
+    "debug", "fix", "patch", "update", "upload", "download", "browse", "view", "show", "hide", "menu",
+    "list", "array", "object", "string", "number", "boolean", "null", "undefined", "function", "return",
+    "if", "else", "switch", "while", "for", "do", "class", "const", "let", "var", "import", "export",
+    "main", "head", "body", "html", "css", "js", "style", "layout", "design", "theme", "view",
+    "portal", "site", "web", "page", "link", "path", "route", "url", "host", "domain", "admin",
+    "user", "guest", "member", "profile", "feed", "post", "comment", "like", "share", "follow",
+    "chat", "talk", "voice", "call", "group", "room", "zone", "area", "local", "global", "common",
+    "social", "public", "private", "secret", "hidden", "found", "lost", "known", "unknown", "strange",
+    "familiar", "different", "similar", "equal", "better", "worse", "best", "worst", "great", "small",
+    "tiny", "giant", "huge", "massive", "minor", "major", "basic", "complex", "advanced", "simple",
+    "easy", "hard", "difficult", "tough", "rough", "smooth", "gentle", "wild", "calm", "peaceful",
+    "angry", "sad", "happy", "joyful", "excited", "bored", "tired", "sleepy", "awake", "alert",
+    "active", "passive", "static", "dynamic", "fast", "slow", "steady", "quick", "brief", "long",
+    "short", "tall", "high", "low", "deep", "surface", "under", "above", "below", "behind", "front",
+    "inside", "outside", "between", "among", "with", "without", "before", "after", "during", "since",
+    "until", "while", "because", "although", "unless", "if", "whether", "either", "neither", "nor",
+    "both", "every", "each", "some", "any", "all", "none", "much", "many", "few", "less", "more",
+    "other", "another", "own", "self", "same", "different", "such", "quite", "rather", "very", "too",
+    "enough", "hardly", "barely", "almost", "nearly", "fully", "totally", "partly", "mainly", "mostly",
+    "directly", "simply", "clearly", "quietly", "loudly", "fastly", "slowly", "daily", "weekly",
+    "monthly", "yearly", "hourly", "always", "never", "often", "seldom", "rarely", "sometimes",
+    "usually", "frequently", "recently", "currently", "eventually", "immediately", "suddenly"
+];
+        
         function generateModel(words, linksPerWord = 22) {
           const model = {};
           for (const w of words) {

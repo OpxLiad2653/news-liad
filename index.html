@@ -23,39 +23,65 @@
 
     <div id="responseBox">כאן יופיע המשפט שה-AI יוצר</div>
 
-    <script type="module">
-        // ייבוא ישיר מה-CDN המודרני
-        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
-
-        let llama = null;
+    <script>
         const box = document.getElementById("responseBox");
         const btn = document.getElementById("sendBtn");
 
-        async function loadModel() {
-            box.innerText = "Loading AI model... (wait a bit)";
-            try {
-                // טעינת המודל בצורה בטוחה
-                llama = await pipeline("text-generation", "Xenova/Meta-Llama-3.2-1B-Instruct");
-                box.innerText = "Model loaded. Write something.";
-            } catch (err) {
-                box.innerText = "Error loading model: " + err.message;
+        const words = [
+          "hello","you","i","am","are","is","was","the","a","day","time","place","world","man","woman",
+          "friend","people","crew","team","car","house","story","idea","moment","game","music","move",
+          "thing","stuff","life","love","like","want","need","think","feel","know","see","hear","walk",
+          "run","talk","speak","work","code","learn","teach","help","give","take","make","go","come",
+          "live","die","dream","sleep","eat","drink","food","water","sun","moon","sky","rain","wind",
+          "fire","earth","light","dark","hot","cold","fun","boring","happy","sad","crazy","quiet","loud",
+          "fast","slow","big","small","new","old","perfect","simple","hard","easy","true","false","plan",
+          "goal","path","road","way","home","here","there","now","today","tomorrow","later","again",
+          "always","never","maybe"
+        ];
+
+        function generateModel(words, linksPerWord = 22) {
+          const model = {};
+          for (const w of words) {
+            const links = [];
+            for (let i = 0; i < linksPerWord; i++) {
+              const randomWord = words[Math.floor(Math.random() * words.length)];
+              links.push(randomWord);
             }
+            model[w] = links;
+          }
+          return model;
         }
 
-        async function sendToAI() {
-            const input = document.getElementById("userInput").value.trim();
-            if (!input) { box.innerText = "Write something first."; return; }
-            if (!llama) { box.innerText = "Model is still loading..."; return; }
+        const model = generateModel(words, 22);
 
-            box.innerText = "Thinking...";
-            const out = await llama(input, { max_new_tokens: 120 });
-            box.innerText = out[0].generated_text;
+        function generate(start) {
+          let cur = start;
+          let res = [cur];
+          for (let i = 0; i < 6; i++) {
+            const opts = model[cur];
+            if (!opts || opts.length === 0) break;
+            cur = opts[Math.floor(Math.random() * opts.length)];
+            res.push(cur);
+          }
+          return res.join(" ");
         }
 
-        // טעינה אוטומטית בהתחלה
-        loadModel();
-        // חיבור הכפתור לפונקציה
+        function sendToAI() {
+          const input = document.getElementById("userInput").value.trim();
+          if (!input) { box.innerText = "Write something first."; return; }
+
+          const firstWord = input.split(" ")[0].toLowerCase();
+          if (!words.includes(firstWord)) {
+            box.innerText = "I don't know that...";
+            return;
+          }
+
+          const response = generate(firstWord);
+          box.innerText = response;
+        }
+
         btn.addEventListener('click', sendToAI);
     </script>
+
 </body>
 </html>

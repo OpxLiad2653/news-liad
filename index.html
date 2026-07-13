@@ -75,26 +75,21 @@
 
 <div id="responseBox">כאן יופיע המשפט שה-AI יוצר</div>
 
-<!-- טוען את הספרייה בצורה שמתאימה ל-GitHub Pages -->
 <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0/dist/transformers.min.js"></script>
 
 <script>
 let llama = null;
 
-// טוען את המודל הכי חדש של LLAMA
 async function loadModel() {
     const box = document.getElementById("responseBox");
     box.innerText = "Loading AI model...";
-
     llama = await window.transformers.pipeline(
         "text-generation",
         "Xenova/Meta-Llama-3.2-1B-Instruct"
     );
-
     box.innerText = "Model loaded. Write something.";
 }
 
-// פונקציה שמופעלת מהכפתור
 async function sendToAI() {
     const input = document.getElementById("userInput").value.trim();
     const box = document.getElementById("responseBox");
@@ -120,7 +115,6 @@ async function sendToAI() {
     box.innerText = out[0].generated_text;
 }
 
-// טוען את המודל ברקע
 loadModel();
 </script>
 

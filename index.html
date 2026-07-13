@@ -2,131 +2,68 @@
 <html lang="he">
 <head>
     <meta charset="UTF-8">
-    <title>Growing Mini AI</title>
+    <title>Space & Code AI</title>
     <style>
-        body { direction: rtl; font-family: 'Segoe UI', Arial; text-align: center; background: linear-gradient(135deg, #0f0f1a, #1e1e2f, #3a3a5c); background-size: 400% 400%; animation: bgMove 12s ease infinite; color: #fff; padding: 30px; }
-        @keyframes bgMove { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
-        input { padding: 12px; width: 320px; border-radius: 10px; border: none; margin-top: 15px; font-size: 18px; }
-        button { padding: 12px 25px; margin-top: 10px; border-radius: 10px; border: none; cursor: pointer; background: linear-gradient(135deg, #ffbb00, #ff7b00); font-weight: bold; font-size: 18px; transition: 0.3s; color: #1e1e2f; }
-        button:hover { transform: scale(1.08); background: linear-gradient(135deg, #ff7b00, #ffbb00); }
-        #responseBox { width: 85%; height: 300px; background: rgba(255,255,255,0.08); margin: 30px auto; border-radius: 15px; padding: 25px; font-size: 22px; overflow-y: auto; box-shadow: 0 0 20px rgba(0,0,0,0.5); text-align: right; }
+        body { direction: rtl; font-family: 'Segoe UI', Arial; text-align: center; background: #050510; color: #00ffcc; padding: 30px; }
+        input { padding: 12px; width: 320px; border-radius: 10px; border: 1px solid #00ffcc; background: #1a1a2e; color: white; font-size: 18px; }
+        button { padding: 12px 25px; margin-top: 10px; border-radius: 10px; border: none; cursor: pointer; background: #00ffcc; font-weight: bold; font-size: 18px; color: #050510; }
+        #responseBox { width: 85%; height: 250px; background: #111; margin: 30px auto; border: 1px solid #00ffcc; padding: 25px; font-size: 20px; overflow-y: auto; text-align: left; }
     </style>
 </head>
 <body>
 
-    <h1>AI קטן שלומד ומשתפר</h1>
-    <p>תכתוב משהו ותלחץ שלח – ה-AI יענה באנגלית</p>
-
-    <input id="userInput" placeholder="כתוב כאן...">
-    <br>
-    <button id="sendBtn">שלח</button>
-
-    <div id="responseBox">כאן יופיע המשפט שה-AI יוצר</div>
+    <h1>Space & JS AI</h1>
+    <p>Talk to the AI in English</p>
+    <input id="userInput" placeholder="Type here...">
+    <button id="sendBtn">Send</button>
+    <div id="responseBox">AI is ready...</div>
 
     <script>
         const box = document.getElementById("responseBox");
         const btn = document.getElementById("sendBtn");
 
-       const words = [
-    "hello", "you", "i", "am", "are", "is", "was", "the", "a", "day", "time", "place", "world", "man", "woman",
-    "friend", "people", "crew", "team", "car", "house", "story", "idea", "moment", "game", "music", "move",
-    "thing", "stuff", "life", "love", "like", "want", "need", "think", "feel", "know", "see", "hear", "walk",
-    "run", "talk", "speak", "work", "code", "learn", "teach", "help", "give", "take", "make", "go", "come",
-    "live", "die", "dream", "sleep", "eat", "drink", "food", "water", "sun", "moon", "sky", "rain", "wind",
-    "fire", "earth", "light", "dark", "hot", "cold", "fun", "boring", "happy", "sad", "crazy", "quiet", "loud",
-    "fast", "slow", "big", "small", "new", "old", "perfect", "simple", "hard", "easy", "true", "false", "plan",
-    "goal", "path", "road", "way", "home", "here", "there", "now", "today", "tomorrow", "later", "again",
-    "always", "never", "maybe",
-    "adventure", "journey", "mountain", "ocean", "river", "forest", "desert", "stars", "galaxy", "universe",
-    "energy", "power", "strength", "courage", "wisdom", "knowledge", "secret", "mystery", "history", "future",
-    "past", "change", "growth", "purpose", "vision", "focus", "success", "failure", "hope", "faith", "trust",
-    "honor", "respect", "kindness", "gentle", "fierce", "wild", "calm", "storm", "thunder", "lightning",
-    "bridge", "door", "window", "book", "page", "words", "language", "voice", "sound", "silence", "echo",
-    "rhythm", "dance", "song", "art", "color", "paint", "beauty", "nature", "science", "physics", "logic",
-    "math", "data", "binary", "system", "network", "server", "cloud", "digital", "virtual", "reality",
-    "human", "soul", "spirit", "body", "mind", "heart", "breath", "blood", "bone", "skin", "muscle",
-    "wonder", "curiosity", "question", "answer", "solve", "build", "create", "invent", "design", "structure",
-    "pattern", "sequence", "link", "connect", "reach", "grasp", "hold", "release", "fly", "climb", "dive",
-    "jump", "fall", "rise", "stand", "sit", "wait", "watch", "search", "find", "lose", "hide", "seek",
-    "begin", "end", "stop", "start", "continue", "pause", "resume", "change", "shift", "turn", "spin",
-    "flow", "glow", "shine", "spark", "burn", "freeze", "melt", "solid", "liquid", "gas", "atom",
-    "molecule", "space", "gravity", "orbit", "planet", "comet", "meteor", "asteroid", "vacuum", "void",
-    "depth", "height", "width", "length", "distance", "near", "far", "wide", "narrow", "deep", "shallow",
-    "thick", "thin", "heavy", "light", "sharp", "dull", "rough", "smooth", "soft", "hard", "wet", "dry",
-    "clean", "dirty", "fresh", "stale", "sweet", "bitter", "sour", "salty", "spicy", "plain", "rich",
-    "poor", "valuable", "cheap", "expensive", "free", "bound", "open", "closed", "locked", "unlocked",
-    "broken", "fixed", "whole", "part", "total", "sum", "math", "add", "subtract", "multiply", "divide",
-    "count", "measure", "size", "shape", "form", "model", "frame", "base", "top", "bottom", "side",
-    "center", "middle", "edge", "corner", "angle", "curve", "straight", "circle", "square", "triangle",
-    "line", "point", "dot", "mark", "sign", "symbol", "letter", "note", "message", "text", "script",
-    "scroll", "screen", "button", "click", "input", "output", "process", "cycle", "loop", "error",
-    "debug", "fix", "patch", "update", "upload", "download", "browse", "view", "show", "hide", "menu",
-    "list", "array", "object", "string", "number", "boolean", "null", "undefined", "function", "return",
-    "if", "else", "switch", "while", "for", "do", "class", "const", "let", "var", "import", "export",
-    "main", "head", "body", "html", "css", "js", "style", "layout", "design", "theme", "view",
-    "portal", "site", "web", "page", "link", "path", "route", "url", "host", "domain", "admin",
-    "user", "guest", "member", "profile", "feed", "post", "comment", "like", "share", "follow",
-    "chat", "talk", "voice", "call", "group", "room", "zone", "area", "local", "global", "common",
-    "social", "public", "private", "secret", "hidden", "found", "lost", "known", "unknown", "strange",
-    "familiar", "different", "similar", "equal", "better", "worse", "best", "worst", "great", "small",
-    "tiny", "giant", "huge", "massive", "minor", "major", "basic", "complex", "advanced", "simple",
-    "easy", "hard", "difficult", "tough", "rough", "smooth", "gentle", "wild", "calm", "peaceful",
-    "angry", "sad", "happy", "joyful", "excited", "bored", "tired", "sleepy", "awake", "alert",
-    "active", "passive", "static", "dynamic", "fast", "slow", "steady", "quick", "brief", "long",
-    "short", "tall", "high", "low", "deep", "surface", "under", "above", "below", "behind", "front",
-    "inside", "outside", "between", "among", "with", "without", "before", "after", "during", "since",
-    "until", "while", "because", "although", "unless", "if", "whether", "either", "neither", "nor",
-    "both", "every", "each", "some", "any", "all", "none", "much", "many", "few", "less", "more",
-    "other", "another", "own", "self", "same", "different", "such", "quite", "rather", "very", "too",
-    "enough", "hardly", "barely", "almost", "nearly", "fully", "totally", "partly", "mainly", "mostly",
-    "directly", "simply", "clearly", "quietly", "loudly", "fastly", "slowly", "daily", "weekly",
-    "monthly", "yearly", "hourly", "always", "never", "often", "seldom", "rarely", "sometimes",
-    "usually", "frequently", "recently", "currently", "eventually", "immediately", "suddenly"
-];
-        
-        function generateModel(words, linksPerWord = 22) {
-          const model = {};
-          for (const w of words) {
-            const links = [];
-            for (let i = 0; i < linksPerWord; i++) {
-              const randomWord = words[Math.floor(Math.random() * words.length)];
-              links.push(randomWord);
-            }
-            model[w] = links;
-          }
-          return model;
-        }
+        const vocab = [
+            "i", "you", "me", "we", "he", "she", "they", "my", "your", "his", "her", "their", "it", "this", "that",
+            "space", "star", "blackhole", "galaxy", "orbit", "planet", "universe", "gravity", "comet", "asteroid", "nebula", "cosmos", "lightyear", "vacuum", "void", "stellar", "moon", "sun",
+            "javascript", "js", "web", "frontend", "backend", "code", "programming", "software", "developer", "node", "react", "html", "css", "script", "function", "variable", "object", "array", "python", "game", "abandoned", "learning", "build", "debug", "deployment",
+            "facebook", "instagram", "twitter", "tiktok", "whatsapp", "telegram", "youtube", "linkedin", "discord", "snapchat", "messenger",
+            "hello", "thanks", "sorry", "maybe", "please", "okay", "cool", "crazy", "amazing", "brother", "friend", "money", "work", "life", "future", "time", "day", "night", "now", "later", "good", "bad", "problem", "solution", "happy", "serious"
+        ];
 
-        const model = generateModel(words, 22);
+        let model = JSON.parse(localStorage.getItem('spaceModel')) || {};
+        
+        function learn(text) {
+            const arr = text.toLowerCase().match(/\b\w+\b/g);
+            if (!arr) return;
+            const context = ["liad", "is", "a", "javascript", "developer", "he", "likes", "web", "coding", "not", "python", "no", "more", "games"];
+            const fullText = arr.concat(context);
+            
+            for (let i = 0; i < fullText.length - 1; i++) {
+                if (!model[fullText[i]]) model[fullText[i]] = [];
+                model[fullText[i]].push(fullText[i + 1]);
+            }
+            localStorage.setItem('spaceModel', JSON.stringify(model));
+        }
 
         function generate(start) {
-          let cur = start;
-          let res = [cur];
-          for (let i = 0; i < 6; i++) {
-            const opts = model[cur];
-            if (!opts || opts.length === 0) break;
-            cur = opts[Math.floor(Math.random() * opts.length)];
-            res.push(cur);
-          }
-          return res.join(" ");
+            let cur = start || "liad";
+            let res = [cur];
+            for (let i = 0; i < 8; i++) {
+                const opts = model[cur];
+                if (!opts || opts.length === 0) break;
+                cur = opts[Math.floor(Math.random() * opts.length)];
+                res.push(cur);
+            }
+            return res.join(" ");
         }
 
-        function sendToAI() {
-          const input = document.getElementById("userInput").value.trim();
-          if (!input) { box.innerText = "Write something first."; return; }
-
-          const firstWord = input.split(" ")[0].toLowerCase();
-          if (!words.includes(firstWord)) {
-            box.innerText = "I don't know that...";
-            return;
-          }
-
-          const response = generate(firstWord);
-          box.innerText = response;
-        }
-
-        btn.addEventListener('click', sendToAI);
+        btn.addEventListener('click', () => {
+            const val = document.getElementById("userInput").value;
+            learn(val);
+            const first = val.split(" ")[0].toLowerCase();
+            box.innerText = generate(first);
+            document.getElementById("userInput").value = "";
+        });
     </script>
-
 </body>
 </html>

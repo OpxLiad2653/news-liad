@@ -67,7 +67,7 @@
 <body>
 
 <h1>AI קטן שלומד ומשתפר</h1>
-<p>תכתוב משהו ותלחץ שלח – ה-AI ילמד ויענה</p>
+<p>תכתוב משהו ותלחץ שלח – ה-AI יענה באנגלית</p>
 
 <input id="userInput" placeholder="כתוב כאן...">
 <br>
@@ -75,84 +75,10 @@
 
 <div id="responseBox">כאן יופיע המשפט שה-AI יוצר</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script type="module">
+import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers/dist/transformers.min.js";
 
-<script>
-let corpus = "Hello, I am a small AI model that can generate long English text. I learn from Hebrew input too, but I always respond in English. I know basic grammar, simple sentence structure, and I can continue text creatively.";
-let model;
-let chars = [];
-let charToIndex = {};
-let indexToChar = {};
-let vocabSize = 0;
-
-function updateCorpus(text) {
-    corpus += " " + text;
-    chars = Array.from(new Set(corpus.split("")));
-    charToIndex = {};
-    indexToChar = {};
-    chars.forEach((c, i) => {
-        charToIndex[c] = i;
-        indexToChar[i] = c;
-    });
-    vocabSize = chars.length;
-}
-
-function encode(text) {
-    return text.split("").map(c => charToIndex[c] ?? 0);
-}
-
-function buildModel() {
-    model = tf.sequential();
-    model.add(tf.layers.embedding({ inputDim: vocabSize, outputDim: 32, inputLength: 60 }));
-    model.add(tf.layers.simpleRNN({ units: 256 }));
-    model.add(tf.layers.dense({ units: vocabSize, activation: "softmax" }));
-    model.compile({ optimizer: "adam", loss: "sparseCategoricalCrossentropy" });
-}
-
-function createDataset() {
-    const encoded = encode(corpus);
-    const inputs = [];
-    const labels = [];
-
-    for (let i = 0; i < encoded.length - 61; i++) {
-        inputs.push(encoded.slice(i, i + 60));
-        labels.push(encoded[i + 60]);
-    }
-
-    const xs = tf.tensor2d(inputs, [inputs.length, 60]);
-    const ys = tf.tensor1d(labels, "int32");
-    return { xs, ys };
-}
-
-async function train() {
-    if (vocabSize < 5) return;
-    buildModel();
-    const { xs, ys } = createDataset();
-    await model.fit(xs, ys, { epochs: 12, batchSize: 32 });
-    xs.dispose();
-    ys.dispose();
-}
-
-async function generate(seed) {
-    if (!model) return "Model is not ready yet.";
-    if (seed.length < 60) seed = (corpus.slice(0, 60 - seed.length) + seed).slice(-60);
-
-    let text = seed;
-
-    for (let i = 0; i < 400; i++) {
-        const input = encode(text.slice(-60));
-        const tensor = tf.tensor2d([input], [1, 60]);
-        const pred = model.predict(tensor);
-        const probs = pred.dataSync();
-        tensor.dispose();
-        pred.dispose();
-
-        let maxIndex = probs.indexOf(Math.max(...probs));
-        text += indexToChar[maxIndex] ?? " ";
-    }
-
-    return text;
-}
+let generator = await pipeline("text-generation", "Xenova/gpt2");
 
 async function sendToAI() {
     const input = document.getElementById("userInput").value.trim();
@@ -163,12 +89,18 @@ async function sendToAI() {
         return;
     }
 
-    updateCorpus(input);
-    await train();
-    const reply = await generate("The AI says: ");
-    box.innerText = reply;
+    const prompt = "The AI says: " + input + "\n\n";
+
+    const out = await generator(prompt, {
+        max_new_tokens: 200,
+        temperature: 0.9,
+        top_p: 0.95
+    });
+
+    box.innerText = out[0].generated_text;
 }
 </script>
 
 </body>
 </html>
+ 

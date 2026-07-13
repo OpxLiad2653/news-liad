@@ -71,55 +71,101 @@
 
 <input id="userInput" placeholder="כתוב כאן...">
 <br>
-<button onclick="sendToAI()">שלח ל-AI</button>
+<button onclick="sendToAI()">שלח</button>
 
 <div id="responseBox">כאן יופיע המשפט שה-AI יוצר</div>
 
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
 <script>
-let model = {};
+let corpus = "";
+let model;
+let chars = [];
+let charToIndex = {};
+let indexToChar = {};
+let vocabSize = 0;
 
-function learn(text) {
-    let words = text.split(/\s+/);
-
-    for (let i = 0; i < words.length - 1; i++) {
-        let w1 = words[i];
-        let w2 = words[i + 1];
-
-        if (!model[w1]) model[w1] = [];
-        model[w1].push(w2);
-    }
+function updateCorpus(text) {
+    corpus += " " + text;
+    chars = Array.from(new Set(corpus.split("")));
+    charToIndex = {};
+    indexToChar = {};
+    chars.forEach((c, i) => {
+        charToIndex[c] = i;
+        indexToChar[i] = c;
+    });
+    vocabSize = chars.length;
 }
 
-function generate() {
-    let keys = Object.keys(model);
-    if (keys.length === 0) {
-        return "ה-AI עדיין לא למד כלום.";
-    }
-
-    let word = keys[Math.floor(Math.random() * keys.length)];
-    let output = [word];
-
-    for (let i = 0; i < 20; i++) {
-        let nextWords = model[word];
-        if (!nextWords || nextWords.length === 0) break;
-        word = nextWords[Math.floor(Math.random() * nextWords.length)];
-        output.push(word);
-    }
-
-    return output.join(" ");
+function encode(text) {
+    return text.split("").map(c => charToIndex[c] ?? 0);
 }
 
-function sendToAI() {
-    let text = document.getElementById("userInput").value.trim();
-    let box = document.getElementById("responseBox");
+function buildModel() {
+    model = tf.sequential();
+    model.add(tf.layers.embedding({ inputDim: vocabSize, outputDim: 32, inputLength: 40 }));
+    model.add(tf.layers.simpleRNN({ units: 128 }));
+    model.add(tf.layers.dense({ units: vocabSize, activation: "softmax" }));
+    model.compile({ optimizer: "adam", loss: "sparseCategoricalCrossentropy" });
+}
 
-    if (!text) {
+function createDataset() {
+    const encoded = encode(corpus);
+    const inputs = [];
+    const labels = [];
+
+    for (let i = 0; i < encoded.length - 41; i++) {
+        inputs.push(encoded.slice(i, i + 40));
+        labels.push(encoded[i + 40]);
+    }
+
+    const xs = tf.tensor2d(inputs, [inputs.length, 40]);
+    const ys = tf.tensor1d(labels, "int32");
+    return { xs, ys };
+}
+
+async function train() {
+    if (vocabSize < 5) return;
+    buildModel();
+    const { xs, ys } = createDataset();
+    await model.fit(xs, ys, { epochs: 10, batchSize: 16 });
+    xs.dispose();
+    ys.dispose();
+}
+
+async function generate(seed) {
+    if (!model) return "המודל עדיין לא מוכן.";
+    if (seed.length < 40) seed = (corpus.slice(0, 40 - seed.length) + seed).slice(-40);
+
+    let text = seed;
+
+    for (let i = 0; i < 80; i++) {
+        const input = encode(text.slice(-40));
+        const tensor = tf.tensor2d([input], [1, 40]);
+        const pred = model.predict(tensor);
+        const probs = pred.dataSync();
+        tensor.dispose();
+        pred.dispose();
+
+        let maxIndex = probs.indexOf(Math.max(...probs));
+        text += indexToChar[maxIndex] ?? " ";
+    }
+
+    return text;
+}
+
+async function sendToAI() {
+    const input = document.getElementById("userInput").value.trim();
+    const box = document.getElementById("responseBox");
+
+    if (!input) {
         box.innerText = "תכתוב משהו קודם.";
         return;
     }
 
-    learn(text);
-    let reply = generate();
+    updateCorpus(input);
+    await train();
+    const reply = await generate(input);
     box.innerText = reply;
 }
 </script>

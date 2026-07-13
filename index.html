@@ -21,7 +21,7 @@
     <script>
         const box = document.getElementById("responseBox");
         const btn = document.getElementById("sendBtn");
-        const apiKey = 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; // הכנס כאן את המפתח שלך
+        const apiKey = "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"; 
 
         async function getGPTResponse(prompt) {
             try {
@@ -37,9 +37,10 @@
                     })
                 });
                 const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
                 return data.choices[0].message.content;
             } catch (error) {
-                return "Connection Error: Check your API Key.";
+                return "Error: " + error.message;
             }
         }
 

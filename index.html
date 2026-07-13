@@ -35,25 +35,33 @@
         function learn(text) {
             const arr = text.toLowerCase().match(/\b\w+\b/g);
             if (!arr) return;
-            const context = ["liad", "is", "a", "javascript", "developer", "he", "likes", "web", "coding", "not", "python", "no", "more", "games"];
-            const fullText = arr.concat(context);
             
-            for (let i = 0; i < fullText.length - 1; i++) {
-                if (!model[fullText[i]]) model[fullText[i]] = [];
-                model[fullText[i]].push(fullText[i + 1]);
+            for (let i = 0; i < arr.length - 1; i++) {
+                if (!model[arr[i]]) model[arr[i]] = [];
+                model[arr[i]].push(arr[i + 1]);
             }
             localStorage.setItem('spaceModel', JSON.stringify(model));
         }
 
         function generate(start) {
-            let cur = start || "liad";
+            let cur = start || "hello";
             let res = [cur];
-            for (let i = 0; i < 8; i++) {
+            
+            for (let i = 0; i < 6; i++) {
                 const opts = model[cur];
-                if (!opts || opts.length === 0) break;
-                cur = opts[Math.floor(Math.random() * opts.length)];
+                if (!opts || opts.length === 0) {
+                    const keys = Object.keys(model);
+                    cur = keys[Math.floor(Math.random() * keys.length)];
+                } else {
+                    cur = opts[Math.floor(Math.random() * opts.length)];
+                }
                 res.push(cur);
             }
+            
+            if (Math.random() > 0.7) {
+                res.push("liad");
+            }
+            
             return res.join(" ");
         }
 

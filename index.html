@@ -2,37 +2,28 @@
 <html lang="he">
 <head>
     <meta charset="UTF-8">
-    <title>Space & Local AI</title>
-    <script type="module">
-        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0';
-        
-        let generator;
-        const box = document.getElementById("responseBox");
-        
-        async function init() {
-            box.innerText = "טוען מודל מקומי (זה קורה רק פעם אחת)...";
-            generator = await pipeline('text-generation', 'Xenova/gpt2');
-            box.innerText = "AI מוכן! שום דבר לא יוצא מהמחשב שלך.";
-        }
-        init();
-
-        document.getElementById("sendBtn").onclick = async () => {
-            const prompt = document.getElementById("userInput").value;
-            box.innerText = "חושב...";
-            const res = await generator(prompt);
-            box.innerText = res[0].generated_text;
-        };
-    </script>
     <style>
-        body { direction: rtl; font-family: sans-serif; text-align: center; background: #050510; color: #00ffcc; padding: 30px; }
-        input { padding: 12px; width: 320px; border-radius: 10px; }
-        #responseBox { width: 85%; height: 250px; background: #111; margin: 30px auto; border: 1px solid #00ffcc; padding: 25px; color: white; overflow-y: auto; }
+        body { direction: rtl; background: #050510; color: #00ffcc; padding: 20px; }
+        #box { border: 1px solid #00ffcc; padding: 10px; margin-top: 10px; min-height: 50px; }
     </style>
 </head>
 <body>
-    <h1>Space & Local AI</h1>
-    <input id="userInput" placeholder="Type here...">
-    <button id="sendBtn">Send</button>
-    <div id="responseBox">טוען...</div>
+    <input id="in" placeholder="שאל...">
+    <button id="btn">שלח</button>
+    <div id="box">מוכן...</div>
+    <script>
+        document.getElementById('btn').onclick = async () => {
+            const prompt = document.getElementById('in').value;
+            const box = document.getElementById('box');
+            box.innerText = "שולח לשרת...";
+            const res = await fetch("https://api-inference.huggingface.co/models/gpt2", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ inputs: prompt })
+            });
+            const data = await res.json();
+            box.innerText = data[0].generated_text;
+        };
+    </script>
 </body>
 </html>

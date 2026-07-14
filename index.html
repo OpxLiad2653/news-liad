@@ -1,28 +1,58 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <style>
-        body { direction: rtl; background: #050510; color: #00ffcc; padding: 20px; }
-        #box { border: 1px solid #00ffcc; padding: 10px; margin-top: 10px; min-height: 50px; }
+        body { background: #050510; color: #00ffcc; font-family: 'Segoe UI', sans-serif; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        .wrapper { width: 100%; max-width: 600px; border: 1px solid #00ffcc; padding: 30px; border-radius: 20px; box-shadow: 0 0 30px #00ffcc22; }
+        h2 { color: #fff; margin-top: 0; font-weight: 300; letter-spacing: 2px; }
+        span.mint { color: #00ffcc; font-weight: bold; }
+        input { width: 100%; padding: 15px; background: #0a0a1a; border: 1px solid #00ffcc; color: white; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 15px; background: #00ffcc; border: none; color: #050510; font-weight: bold; cursor: pointer; border-radius: 10px; transition: 0.4s; }
+        button:hover { background: #fff; transform: translateY(-2px); }
+        #box { margin-top: 25px; padding: 20px; border-top: 1px solid #222; min-height: 150px; line-height: 1.8; color: #aaa; }
     </style>
 </head>
 <body>
-    <input id="in" placeholder="שאל...">
-    <button id="btn">שלח</button>
-    <div id="box">מוכן...</div>
+    <div class="wrapper">
+        <h2>MINT <span class="mint">UX</span></h2>
+        <input id="in" placeholder="הקלד פקודה...">
+        <button id="btn">ביצוע</button>
+        <div id="box">ממתין לקלט...</div>
+    </div>
+
     <script>
         document.getElementById('btn').onclick = async () => {
             const prompt = document.getElementById('in').value;
             const box = document.getElementById('box');
-            box.innerText = "שולח לשרת...";
-            const res = await fetch("https://api-inference.huggingface.co/models/gpt2", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ inputs: prompt })
-            });
-            const data = await res.json();
-            box.innerText = data[0].generated_text;
+            const API_KEY = "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"; 
+
+            box.innerText = "מעבד...";
+
+            try {
+                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: { 
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.origin,
+                        "X-Title": "MINT UX" 
+                    },
+                    body: JSON.stringify({
+                        model: "meta-llama/llama-3.1-8b-instruct",
+                        messages: [{ role: "user", content: prompt }]
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    box.innerText = "שגיאה מהשרת: " + data.error.message;
+                } else {
+                    box.innerText = data.choices[0].message.content;
+                }
+            } catch (err) {
+                box.innerText = "שגיאת מערכת MINT UX: בדוק את החיבור.";
+            }
         };
     </script>
 </body>

@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        @keyframes particle-float {
-            0% { transform: translateY(0) scale(1); opacity: 0; }
-            10% { opacity: 0.8; }
-            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
-        }
-
         body { 
             background: #050510; 
             color: #00ffcc; 
@@ -19,30 +13,27 @@
             flex-direction: column; 
             align-items: center; 
             position: relative;
-            overflow: hidden; 
-            min-height: 100vh; 
+            min-height: 300vh;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
-        body::before, body::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 3px;
-            height: 3px;
-            background: rgba(0, 255, 204, 0.6);
+        .particle {
+            position: fixed;
+            top: 100vh;
+            width: 4px;
+            height: 4px;
+            background: rgba(0,255,204,0.7);
             border-radius: 50%;
-            box-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
-            animation: particle-float 10s infinite linear;
+            box-shadow: 0 0 8px rgba(0,255,204,0.6);
+            animation: floatUp linear infinite;
             z-index: 1;
         }
 
-        body::after {
-            animation-delay: 5s;
-            left: 50%;
-            width: 2px;
-            height: 2px;
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-120vh) scale(1.4); opacity: 0; }
         }
 
         .wrapper { 
@@ -64,7 +55,7 @@
         input { width: 100%; padding: 15px; background: #0a0a1a; border: 1px solid #00ffcc; color: white; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; outline: none; transition: box-shadow 0.3s; font-size: 1rem; }
         input:focus { box-shadow: 0 0 15px #00ffcc44; }
 
-        button { width: 100%; padding: 15px; background: #00ffcc; border: none; color: #050510; font-weight: bold; cursor: pointer; border-radius: 10px; transition: 0.4s; position: relative; overflow: hidden; font-size: 11.1rem; }
+        button { width: 100%; padding: 15px; background: #00ffcc; border: none; color: #050510; font-weight: bold; cursor: pointer; border-radius: 10px; transition: 0.4s; position: relative; overflow: hidden; font-size: 1.1rem; }
         button:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
         button:active { transform: translateY(1px); }
 
@@ -76,61 +67,73 @@
             50% { opacity: 1; }
             100% { opacity: 0.5; }
         }
-
-        @media (max-width: 600px) {
-            body { padding: 20px; }
-            .wrapper { padding: 15px; border-radius: 15px; }
-            h2 { font-size: 1.4rem; }
-            input, button, #box { font-size: 0.9rem; }
-            input, button { padding: 12px; }
-        }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <h2>MINT <span class="mint">UX</span></h2>
-        <input id="in" placeholder="talk with mint_ux">
-        <button id="btn">send</button>
-        <div id="box">waiting for response from server</div>
-    </div>
 
-    <script>
-        document.getElementById('btn').onclick = async () => {
-            const prompt = document.getElementById('in').value;
-            const box = document.getElementById('box');
-            const API_KEY = "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"; 
+<script>
+    function createParticles() {
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement("div");
+            p.classList.add("particle");
 
-            box.innerText = "loading mint_ux";
-            box.classList.add('processing');
+            const side = Math.random() < 0.5 ? 0 : window.innerWidth - 5;
+            p.style.left = side + "px";
 
-            try {
-                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: { 
-                        "Authorization": `Bearer ${API_KEY}`,
-                        "Content-Type": "application/json",
-                        "HTTP-Referer": window.location.origin,
-                        "X-Title": "MINT UX" 
-                    },
-                    body: JSON.stringify({
-                        model: "meta-llama/llama-3.1-8b-instruct",
-                        messages: [{ role: "user", content: prompt }]
-                    })
-                });
-                const data = await res.json();
-                
-                box.classList.remove('processing');
+            p.style.animationDuration = (6 + Math.random() * 6) + "s";
+            p.style.animationDelay = (Math.random() * 5) + "s";
 
-                if (data.error) {
-                    box.innerText = "שגיאה מהשרת: " + data.error.message;
-                } else {
-                    box.innerText = data.choices[0].message.content;
-                }
-            } catch (err) {
-                box.classList.remove('processing');
-                box.innerText = "שגיאת מערכת MINT UX: בדוק את החיבור.";
+            document.body.appendChild(p);
+        }
+    }
+    createParticles();
+</script>
+
+<div class="wrapper">
+    <h2>MINT <span class="mint">UX</span></h2>
+    <input id="in" placeholder="talk with mint_ux">
+    <button id="btn">send</button>
+    <div id="box">waiting for response from server</div>
+</div>
+
+<script>
+    document.getElementById('btn').onclick = async () => {
+        const prompt = document.getElementById('in').value;
+        const box = document.getElementById('box');
+        const API_KEY = "YOUR_API_KEY";
+
+        box.innerText = "loading mint_ux";
+        box.classList.add('processing');
+
+        try {
+            const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: { 
+                    "Authorization": `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": window.location.origin,
+                    "X-Title": "MINT UX" 
+                },
+                body: JSON.stringify({
+                    model: "meta-llama/llama-3.1-8b-instruct",
+                    messages: [{ role: "user", content: prompt }]
+                })
+            });
+            const data = await res.json();
+            
+            box.classList.remove('processing');
+
+            if (data.error) {
+                box.innerText = "שגיאה מהשרת: " + data.error.message;
+            } else {
+                box.innerText = data.choices[0].message.content;
             }
-        };
-    </script>
+        } catch (err) {
+            box.classList.remove('processing');
+            box.innerText = "שגיאת מערכת MINT UX: בדוק את החיבור.";
+        }
+    };
+</script>
+
 </body>
 </html>

@@ -2,15 +2,88 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background: #050510; color: #00ffcc; font-family: 'Segoe UI', sans-serif; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-        .wrapper { width: 100%; max-width: 600px; border: 1px solid #00ffcc; padding: 30px; border-radius: 20px; box-shadow: 0 0 30px #00ffcc22; }
-        h2 { color: #fff; margin-top: 0; font-weight: 300; letter-spacing: 2px; }
+        @keyframes particle-float {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+
+        body { 
+            background: #050510; 
+            color: #00ffcc; 
+            font-family: 'Segoe UI', sans-serif; 
+            padding: 40px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            position: relative;
+            overflow: hidden; 
+            min-height: 100vh; 
+            box-sizing: border-box;
+        }
+
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 3px;
+            height: 3px;
+            background: rgba(0, 255, 204, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
+            animation: particle-float 10s infinite linear;
+            z-index: 1;
+        }
+
+        body::after {
+            animation-delay: 5s;
+            left: 50%;
+            width: 2px;
+            height: 2px;
+        }
+
+        .wrapper { 
+            width: 100%; 
+            max-width: 600px; 
+            border: 1px solid #00ffcc; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 0 30px #00ffcc22; 
+            background: rgba(10, 10, 26, 0.9); 
+            position: relative; 
+            z-index: 2;
+            box-sizing: border-box;
+        }
+
+        h2 { color: #fff; margin-top: 0; font-weight: 300; letter-spacing: 2px; font-size: 1.8rem; }
         span.mint { color: #00ffcc; font-weight: bold; }
-        input { width: 100%; padding: 15px; background: #0a0a1a; border: 1px solid #00ffcc; color: white; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 15px; background: #00ffcc; border: none; color: #050510; font-weight: bold; cursor: pointer; border-radius: 10px; transition: 0.4s; }
-        button:hover { background: #fff; transform: translateY(-2px); }
-        #box { margin-top: 25px; padding: 20px; border-top: 1px solid #222; min-height: 150px; line-height: 1.8; color: #aaa; }
+        
+        input { width: 100%; padding: 15px; background: #0a0a1a; border: 1px solid #00ffcc; color: white; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; outline: none; transition: box-shadow 0.3s; font-size: 1rem; }
+        input:focus { box-shadow: 0 0 15px #00ffcc44; }
+
+        button { width: 100%; padding: 15px; background: #00ffcc; border: none; color: #050510; font-weight: bold; cursor: pointer; border-radius: 10px; transition: 0.4s; position: relative; overflow: hidden; font-size: 11.1rem; }
+        button:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        button:active { transform: translateY(1px); }
+
+        #box { margin-top: 25px; padding: 20px; border-top: 1px solid #222; min-height: 150px; line-height: 1.8; color: #aaa; font-size: 1.1rem; }
+        #box.processing { animation: blink 1.5s infinite; color: #00ffcc; }
+
+        @keyframes blink {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 20px; }
+            .wrapper { padding: 15px; border-radius: 15px; }
+            h2 { font-size: 1.4rem; }
+            input, button, #box { font-size: 0.9rem; }
+            input, button { padding: 12px; }
+        }
     </style>
 </head>
 <body>
@@ -28,6 +101,7 @@
             const API_KEY = "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"; 
 
             box.innerText = "מעבד...";
+            box.classList.add('processing');
 
             try {
                 const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -45,12 +119,15 @@
                 });
                 const data = await res.json();
                 
+                box.classList.remove('processing');
+
                 if (data.error) {
                     box.innerText = "שגיאה מהשרת: " + data.error.message;
                 } else {
                     box.innerText = data.choices[0].message.content;
                 }
             } catch (err) {
+                box.classList.remove('processing');
                 box.innerText = "שגיאת מערכת MINT UX: בדוק את החיבור.";
             }
         };

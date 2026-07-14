@@ -89,9 +89,9 @@
 <body>
     <div class="wrapper">
         <h2>MINT <span class="mint">UX</span></h2>
-        <input id="in" placeholder="הקלד פקודה...">
-        <button id="btn">ביצוע</button>
-        <div id="box">ממתין לקלט...</div>
+        <input id="in" placeholder="talk with mint_ux">
+        <button id="btn">send</button>
+        <div id="box">waiting for response from server</div>
     </div>
 
     <script>
@@ -100,7 +100,7 @@
             const box = document.getElementById('box');
             const API_KEY = "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"; 
 
-            box.innerText = "מעבד...";
+            box.innerText = "loading mint_ux";
             box.classList.add('processing');
 
             try {
